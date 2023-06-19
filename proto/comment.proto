@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+option go_package = "../pb;pb";
+import "user.proto";
+// 这里有多个--proto_path是因为当前proto文件中有import别的proto文件，在构建的时候这些proto文件要从--proto_path指定的多个路径去找，
+// 一个没找到就回去从另一个招
+// protoc --proto_path=../../../user/proto/ --proto_path=. --go_out=. ./*.proto
+
+message CommonResponse {
+  int64 code = 1;
+  string msg = 2;
+}
+
+// 发布评论请求
+message PublishCommentReq {
+  int64 user_id = 1;
+  int64 video_id = 2;
+  int64 comment_id = 3;
+  string comment_text = 4;
+  int64 action_type = 5;
+}
+
+message PublishCommentRsp {
+  CommonResponse common_rsp = 1;
+}
+
+
+
+//message CommentContent {
+//  int64 id = 1;
+//
+//  Id         int64  `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
+//    User       *User  `protobuf:"bytes,2,opt,name=user,proto3" json:"user"`
+//  Content    string `protobuf:"bytes,3,opt,name=content,proto3" json:"content"`
+//  CreateDate string `protobuf:"bytes,4,opt,name=create_date,json=createDate,proto3" json:"create_date"`
+//}
+
+message Comment {
+  int64 id = 1; // 视频评论id​
+  UserInfo user_info =2; // 评论用户信息​
+  string content = 3; // 评论内容
+  string create_date = 4; // 评论发布日期，格式 mm-dd​
+}
+
+message GetCommentListReq {
+  int64 video_id = 1;
+}
+
+
+message GetCommentListRsp {
+  CommonResponse common_rsp = 1;
+  repeated Comment comment_list = 3; // 评论列表​
+}
+
+
+service CommentService {
+  rpc PublishComment(PublishCommentReq) returns (PublishCommentRsp); // 发布评论方法
+
+  //  rpc CheckPassWord(CheckPassWordRequest) returns (CheckPassWordResponse); //检查密码
+  //  rpc Register(RegisterRequest) returns (RegisterResponse); // 注册
+
+  //  rpc GetUserByMobile(MobileRequest) returns (UserInfoResponse); // 通过mobile查询用户
+  //  rpc GetUserById(IdRequest) returns (UserInfoResponse); // 通过id查询用户
+  //  rpc CreateUser(CreateUserInfo) returns (UserInfoResponse); // 添加用户
+  //  rpc UpdateUser(UpdateUserInfo) returns (google.protobuf.Empty); // 更新用户（更关心接口有没有被调用）
+}
+
+
+
+
+
+
+
